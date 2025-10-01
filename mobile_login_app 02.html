@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N - Mobile App Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background Image with Overlay */
+        .background-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(205, 133, 101, 0.8) 0%,
+                rgba(186, 115, 89, 0.85) 50%,
+                rgba(168, 97, 77, 0.9) 100%
+            );
+            z-index: 1;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 700"><defs><filter id="blur"><feGaussianBlur stdDeviation="2"/></filter></defs><rect width="400" height="700" fill="%23CD8565"/><g filter="url(%23blur)" opacity="0.6"><circle cx="100" cy="200" r="20" fill="%23FFF"/><circle cx="350" cy="150" r="15" fill="%23FFF"/><circle cx="200" cy="500" r="25" fill="%23FFF"/><circle cx="80" cy="600" r="18" fill="%23FFF"/><path d="M50 350 Q100 300 150 350 T250 350" stroke="%23FFF" fill="none" stroke-width="3" opacity="0.4"/><polygon points="150,450 180,420 210,450 180,480" fill="%23FFF" opacity="0.3"/><rect x="300" y="450" width="30" height="30" fill="%23FFF" opacity="0.3" rx="5"/></g></svg>');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Main Container */
+        .app-container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            padding: 40px 30px;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .wifi-signals {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 60px;
+        }
+
+        .signal {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50px 50px 0 0;
+            border-bottom: none;
+        }
+
+        .signal-1 {
+            width: 40px;
+            height: 20px;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite 0.5s;
+        }
+
+        .signal-2 {
+            width: 60px;
+            height: 30px;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite 1s;
+        }
+
+        .signal-3 {
+            width: 80px;
+            height: 40px;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s infinite 1.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 800;
+            color: #CD8565;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Login Form */
+        .login-form {
+            width: 100%;
+            max-width: 320px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px;
+            padding-left: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .form-input:focus + .input-icon {
+            color: rgba(255, 255, 255, 1);
+        }
+
+        /* Get Started Button */
+        .get-started-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 30px 0 40px 0;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .get-started-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 107, 53, 0.5);
+        }
+
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+
+        .get-started-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading State */
+        .get-started-btn.loading {
+            color: transparent;
+        }
+
+        .get-started-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Footer Links */
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 320px;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .footer-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 30px 25px;
+            }
+
+            .logo {
+                width: 80px;
+                height: 80px;
+                font-size: 38px;
+            }
+
+            .wifi-signals {
+                width: 80px;
+                height: 50px;
+            }
+
+            .signal-1 {
+                width: 32px;
+                height: 16px;
+            }
+
+            .signal-2 {
+                width: 48px;
+                height: 24px;
+            }
+
+            .signal-3 {
+                width: 64px;
+                height: 32px;
+            }
+
+            .form-input {
+                padding: 16px 18px;
+                padding-left: 45px;
+                font-size: 15px;
+            }
+
+            .input-icon {
+                left: 15px;
+                font-size: 15px;
+            }
+
+            .get-started-btn {
+                padding: 16px;
+                font-size: 17px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .app-container {
+                padding: 25px 20px;
+            }
+
+            .logo-section {
+                margin-bottom: 60px;
+            }
+
+            .form-input {
+                padding: 15px 16px;
+                padding-left: 42px;
+                font-size: 14px;
+            }
+        }
+
+        @media (min-height: 800px) {
+            .logo-section {
+                margin-bottom: 120px;
+            }
+
+            .get-started-btn {
+                margin: 40px 0 60px 0;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .form-input {
+                border-color: white;
+                background: rgba(0, 0, 0, 0.3);
+            }
+            
+            .logo {
+                border: 2px solid white;
+            }
+        }
+
+        /* Focus indicators */
+        .form-input:focus,
+        .get-started-btn:focus,
+        .footer-link:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 2px;
+        }
+
+        /* Touch optimization */
+        @media (hover: none) and (pointer: coarse) {
+            .form-input,
+            .get-started-btn,
+            .footer-link {
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="background-image"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <div class="logo-container">
+                <div class="wifi-signals">
+                    <div class="signal signal-1"></div>
+                    <div class="signal signal-2"></div>
+                    <div class="signal signal-3"></div>
+                </div>
+                <div class="logo">N</div>
+            </div>
+        </div>
+
+        <!-- Login Form -->
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <input 
+                    type="text" 
+                    class="form-input" 
+                    id="username"
+                    placeholder="Username"
+                    required
+                    autocomplete="username"
+                    aria-label="Username"
+                >
+                <i class="fas fa-user input-icon"></i>
+            </div>
+
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    class="form-input" 
+                    id="password"
+                    placeholder="Password"
+                    required
+                    autocomplete="current-password"
+                    aria-label="Password"
+                >
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+
+            <button type="submit" class="get-started-btn" id="getStartedBtn">
+                Get Started
+            </button>
+        </form>
+
+        <!-- Footer Links -->
+        <div class="footer-links">
+            <a href="#" class="footer-link" id="createAccount">Create Account</a>
+            <a href="#" class="footer-link" id="needHelp">Need Help?</a>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const createAccountLink = document.getElementById('createAccount');
+        const needHelpLink = document.getElementById('needHelp');
+
+        // Form validation
+        function validateForm() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (username.length < 3) {
+                showError(usernameInput, 'Username must be at least 3 characters');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                showError(passwordInput, 'Password must be at least 6 characters');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function showError(input, message) {
+            input.style.borderColor = 'rgba(255, 99, 71, 0.8)';
+            input.style.background = 'rgba(255, 99, 71, 0.1)';
+            
+            // Remove existing error message
+            const existingError = input.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Create new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            errorDiv.style.cssText = `
+                color: #FFB6C1;
+                font-size: 12px;
+                margin-top: 5px;
+                padding-left: 20px;
+                animation: fadeIn 0.3s ease;
+            `;
+            input.parentNode.appendChild(errorDiv);
+            
+            // Remove error styling after input
+            input.addEventListener('input', function clearError() {
+                input.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                input.style.background = 'rgba(255, 255, 255, 0.15)';
+                if (errorDiv && errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+                input.removeEventListener('input', clearError);
+            }, { once: true });
+        }
+
+        // Form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Show loading state
+            getStartedBtn.classList.add('loading');
+            getStartedBtn.disabled = true;
+            
+            // Simulate login process
+            setTimeout(() => {
+                getStartedBtn.classList.remove('loading');
+                getStartedBtn.disabled = false;
+                
+                // Simulate successful login
+                const username = usernameInput.value.trim();
+                console.log('Login attempt for:', username);
+                
+                // Success animation
+                getStartedBtn.textContent = 'Success!';
+                getStartedBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+                
+                setTimeout(() => {
+                    alert(`Welcome ${username}! Login successful (Demo)`);
+                    // Reset button
+                    getStartedBtn.textContent = 'Get Started';
+                    getStartedBtn.style.background = 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)';
+                }, 1500);
+                
+            }, 2500);
+        });
+
+        // Input focus effects
+        [usernameInput, passwordInput].forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 1)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentNode.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 0.8)';
+            });
+        });
+
+        // Footer link handlers
+        createAccountLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Create account clicked');
+            
+            // Add ripple effect
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-1px)';
+            }, 150);
+            
+            alert('Registration page would open here');
+        });
+
+        needHelpLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Need help clicked');
+            
+            // Add ripple effect
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-1px)';
+            }, 150);
+            
+            alert('Help & Support page would open here');
+        });
+
+        // Auto-focus username on load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                usernameInput.focus();
+            }, 1000); // Wait for animations to complete
+        });
+
+        // Keyboard navigation improvements
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.body.style.outline = '2px solid rgba(255, 255, 255, 0.5)';
+                setTimeout(() => {
+                    document.body.style.outline = 'none';
+                }, 3000);
+            }
+        });
+
+        // Touch feedback for mobile
+        [getStartedBtn, createAccountLink, needHelpLink].forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.8';
+            });
+            
+            element.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        });
+
+        // Responsive text adjustment
+        function adjustFontSize() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            if (screenHeight < 600) {
+                document.documentElement.style.fontSize = '14px';
+            } else {
+                document.documentElement.style.fontSize = '16px';
+            }
+        }
+
+        window.addEventListener('resize', adjustFontSize);
+        window.addEventListener('orientationchange', adjustFontSize);
+        adjustFontSize(); // Initial call
+
+        // Performance optimization - lazy load background effects
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                } else {
+                    entry.target.style.animationPlayState = 'paused';
+                }
+            });
+        });
+
+        document.querySelectorAll('.signal').forEach(signal => {
+            observer.observe(signal);
+        });
+    </script>
+</body>
+</html>
