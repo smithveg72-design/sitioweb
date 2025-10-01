@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Login Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #4A6CF7 0%, #667eea 50%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 360px;
+            min-height: 600px;
+            background: linear-gradient(180deg, #4A6CF7 0%, #667eea 50%, #764ba2 100%);
+            border-radius: 25px;
+            padding: 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Barra superior simulando móvil */
+        .status-bar {
+            height: 25px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 22px 22px 0 0;
+            position: relative;
+        }
+
+        .notch {
+            width: 140px;
+            height: 25px;
+            background: #000;
+            border-radius: 0 0 15px 15px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .login-content {
+            padding: 60px 40px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: calc(600px - 25px);
+        }
+
+        .login-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 80px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-input:focus {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Efecto para el input con valor */
+        .form-input.has-value {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #4A6CF7;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 40px 0 60px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .google-button {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .google-button:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5LjYgMTAuMjI3M0MxOS42IDkuNTE4MTggMTkuNTM2NCA4Ljg0NTQ1IDE5LjQyMjcgOC4yMjcyN0gxMFYxMS45NTQ1SDE1LjM4MThDMTUuMTUgMTMuMzE4MiAxNC40NDU1IDE0LjU4MTggMTMuMzg2NCAxNS40MDkxVjE3Ljc5NTZIMTY42MzY0QzE4LjUwOTEgMTYuMDkwOSAxOS42IDEzLjQzMTggMTkuNiAxMC4yMjczWiIgZmlsbD0iIzQyODVGNCIvPgo8cGF0aCBkPSJNMTAgMjBDMTIuNzMgMjAgMTUuMDM2NCAxOS4wOTA5IDE2LjYzNjQgMTcuNzk1NkwxMy4zODY0IDE1LjQwOTFDMTIuNDMxOCAxNi4wNTQ1IDExLjE3NzMgMTYuNDA5MSAxMCAxNi40MDkxQzcuMzk1NDUgMTYuNDA5MSA1LjE5MDkxIDEzLjU2ODIgNC40MjI3MyAxMEwxLjA5MDkxIDEwSDEuMDQ1NDRWMTI42ODJIMUMxIDEzLjcxMzYgMS40MDkwOSAxNi45NTQ1IDQuNDA5MDkgMjBDNi45MDkwOSAyMCA4LjM0MDkxIDIwIDEwIDIwWiIgZmlsbD0iIzM0QTg1MyIvPgo8cGF0aCBkPSJNNC40MjI3MyAxMEMzLjk4NjM2IDEwIDMuNjM2MzYgOS41IDMuNjM2MzYgOEMzLjYzNjM2IDYuNSAzLjk4NjM2IDYgNC40MjI3MyA2VjMuMzE4MThIMUMxIDMuODUgMC45IDQuNCAwLjkgNUMwLjkgNiAxLjEgNi45IDEuNCA3LjdMMi41IDEwSDQuNDIyNzNaIiBmaWxsPSIjRkJCQzA0Ii8+CjxwYXRoIGQ9Ik0xMCA0QzExLjE1MDkgNCA12LjE4MTggNC40MjcyNyAxMi45NTQ1IDUuMTM2MzZMMTUuODIyNyAyLjI3MjczQzE0LjIyNzMgMC44MDkwOTEgMTIuMzA5MSAwIDEwIDBDNi4zNjM2NCAwIDMuMjcyNzMgMS45NTQ1NSAxLjA5MDkxIDQuODE4MThMNC40MjI3MyA2QzUuMTkwOTEgMy44NjM2NCA3LjM5NTQ1IDQgMTAgNFoiIGZpbGw9IiNFQTQzMzUiLz4KPC9zdmc+');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .mobile-container {
+                max-width: 340px;
+                margin: 10px;
+            }
+
+            .login-content {
+                padding: 50px 30px 30px;
+            }
+
+            .login-title {
+                font-size: 2.2rem;
+                margin-bottom: 60px;
+            }
+
+            .form-input {
+                padding: 16px 18px;
+                font-size: 15px;
+            }
+
+            .login-button, .google-button {
+                padding: 16px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .mobile-container {
+                max-width: 320px;
+            }
+
+            .login-content {
+                padding: 40px 25px 25px;
+            }
+
+            .login-title {
+                font-size: 2rem;
+                margin-bottom: 50px;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-container {
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .login-title {
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .form-group:nth-child(1) {
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .form-group:nth-child(2) {
+            animation: slideInUp 0.8s ease-out 0.6s both;
+        }
+
+        .login-button {
+            animation: slideInUp 0.8s ease-out 0.8s both;
+        }
+
+        .google-button {
+            animation: slideInUp 0.8s ease-out 1s both;
+        }
+
+        /* Efecto de pulsación en botones */
+        .login-button:active,
+        .google-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Placeholder personalizado con animación */
+        .form-input:focus::placeholder {
+            opacity: 0.5;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <div class="status-bar">
+            <div class="notch"></div>
+        </div>
+
+        <div class="login-content">
+            <h1 class="login-title">Log in</h1>
+
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        class="form-input has-value" 
+                        value="myemail7@gmail.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="••••••••"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-button">Log in</button>
+            </form>
+
+            <button class="google-button" id="googleSignIn">
+                <div class="google-icon"></div>
+                Log in with Google
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Funcionalidad del formulario
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email && password) {
+                // Simular proceso de login
+                const loginBtn = document.querySelector('.login-button');
+                loginBtn.textContent = 'Signing in...';
+                loginBtn.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    alert(`Attempting login with: ${email}`);
+                    loginBtn.textContent = 'Log in';
+                    loginBtn.style.opacity = '1';
+                }, 1500);
+            } else {
+                alert('Please fill in all fields');
+            }
+        });
+
+        // Funcionalidad del botón de Google
+        document.getElementById('googleSignIn').addEventListener('click', function() {
+            const googleBtn = this;
+            googleBtn.style.opacity = '0.7';
+            googleBtn.innerHTML = '<div class="google-icon"></div>Connecting...';
+            
+            setTimeout(() => {
+                alert('Redirecting to Google Sign-in...');
+                googleBtn.style.opacity = '1';
+                googleBtn.innerHTML = '<div class="google-icon"></div>Log in with Google';
+            }, 1000);
+        });
+
+        // Manejar estado de inputs con valor
+        document.querySelectorAll('.form-input').forEach(input => {
+            // Verificar al cargar la página
+            toggleHasValue(input);
+            
+            // Verificar en cada cambio
+            input.addEventListener('input', function() {
+                toggleHasValue(this);
+            });
+            
+            input.addEventListener('blur', function() {
+                toggleHasValue(this);
+            });
+        });
+
+        function toggleHasValue(input) {
+            if (input.value.trim() !== '') {
+                input.classList.add('has-value');
+            } else {
+                input.classList.remove('has-value');
+            }
+        }
+
+        // Efectos de enfoque mejorados
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Efecto de vibración en móvil (si está disponible)
+        function vibrateDevice() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50);
+            }
+        }
+
+        // Agregar vibración a los botones
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', vibrateDevice);
+        });
+
+        // Prevenir zoom en inputs en iOS
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.tagName === 'INPUT') {
+                e.target.style.fontSize = '16px';
+            }
+        });
+    </script>
+</body>
+</html>

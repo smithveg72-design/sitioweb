@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Elements */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 100px;
+            height: 100px;
+            top: 70%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            width: 80px;
+            height: 80px;
+            bottom: 30%;
+            left: 25%;
+            animation-delay: 4s;
+        }
+
+        .shape-4 {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            right: 30%;
+            animation-delay: 6s;
+            border-radius: 30%;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            33% {
+                transform: translateY(-30px) rotate(120deg);
+                opacity: 1;
+            }
+            66% {
+                transform: translateY(-15px) rotate(240deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* Main Login Container */
+        .login-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+            animation: slideIn 0.8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Login Title */
+        .login-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 32px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        /* Form Styling */
+        .login-form {
+            width: 100%;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px;
+            padding-left: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+        }
+
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .form-input:focus + .input-icon {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Form Options Row */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+
+        /* Custom Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .checkbox-custom {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+
+        /* Forgot Password Link */
+        .forgot-password {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 300;
+            transition: all 0.3s ease;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .forgot-password:hover {
+            color: rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Login Button */
+        .login-button {
+            width: 100%;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-button:hover::before {
+            left: 100%;
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        /* Loading State */
+        .login-button.loading {
+            color: transparent;
+            pointer-events: none;
+        }
+
+        .login-button.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Footer Text */
+        .footer-text {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .create-account-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            padding: 3px 8px;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        .create-account-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Error States */
+        .form-input.error {
+            border-color: rgba(255, 99, 71, 0.6);
+            background: rgba(255, 99, 71, 0.1);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message {
+            color: rgba(255, 182, 193, 0.9);
+            font-size: 12px;
+            margin-top: 5px;
+            padding-left: 20px;
+            animation: fadeInError 0.3s ease;
+        }
+
+        @keyframes fadeInError {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success State */
+        .form-input.success {
+            border-color: rgba(144, 238, 144, 0.6);
+            background: rgba(144, 238, 144, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 20px;
+                padding: 35px 25px;
+                max-width: 350px;
+            }
+
+            .login-title {
+                font-size: 28px;
+                margin-bottom: 35px;
+            }
+
+            .form-input {
+                padding: 16px 18px;
+                padding-left: 45px;
+                font-size: 15px;
+            }
+
+            .input-icon {
+                left: 15px;
+                font-size: 15px;
+            }
+
+            .login-button {
+                padding: 16px;
+                font-size: 15px;
+            }
+
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 15px;
+                padding: 30px 20px;
+                border-radius: 16px;
+            }
+
+            .login-title {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            .floating-shape {
+                opacity: 0.3;
+            }
+
+            .form-input {
+                padding: 14px 16px;
+                padding-left: 40px;
+                font-size: 14px;
+            }
+
+            .input-icon {
+                left: 12px;
+                font-size: 14px;
+            }
+        }
+
+        /* Accessibility Improvements */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            .login-container {
+                background: rgba(0, 0, 0, 0.8);
+                border: 2px solid white;
+            }
+            
+            .form-input {
+                background: rgba(0, 0, 0, 0.3);
+                border-color: white;
+                color: white;
+            }
+        }
+
+        /* Focus indicators for accessibility */
+        .form-input:focus,
+        .login-button:focus,
+        .forgot-password:focus,
+        .create-account-link:focus,
+        .checkbox-container:focus-within {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 2px;
+        }
+
+        /* Touch optimization */
+        @media (hover: none) and (pointer: coarse) {
+            .form-input,
+            .login-button,
+            .checkbox-container {
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+    </div>
+
+    <!-- Main Login Container -->
+    <div class="login-container">
+        <h2 class="login-title">Login</h2>
+        
+        <form class="login-form" id="loginForm">
+            <!-- Email Input -->
+            <div class="form-group">
+                <input 
+                    type="email" 
+                    class="form-input" 
+                    id="email"
+                    placeholder="Type your email here..."
+                    required
+                    autocomplete="email"
+                    aria-label="Email address"
+                >
+                <i class="fas fa-envelope input-icon"></i>
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <input 
+                    type="password" 
+                    class="form-input" 
+                    id="password"
+                    placeholder="Type your password here..."
+                    required
+                    autocomplete="current-password"
+                    aria-label="Password"
+                >
+                <i class="fas fa-lock input-icon"></i>
+            </div>
+
+            <!-- Form Options Row -->
+            <div class="form-options">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="rememberMe">
+                    <div class="checkbox-custom"></div>
+                    <span class="checkbox-label">Remember me</span>
+                </label>
+                
+                <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="login-button" id="loginButton">
+                Log in
+            </button>
+
+            <!-- Footer -->
+            <div class="footer-text">
+                Don't have an account?
+                <a href="#" class="create-account-link" id="createAccount">Create Account</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+        const forgotPasswordLink = document.getElementById('forgotPassword');
+        const createAccountLink = document.getElementById('createAccount');
+
+        // Validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        function showError(input, message) {
+            input.classList.add('error');
+            input.classList.remove('success');
+            
+            // Remove existing error message
+            const existingError = input.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // Create new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            input.parentNode.appendChild(errorDiv);
+            
+            // Auto-remove error after correction
+            const clearError = () => {
+                input.classList.remove('error');
+                if (errorDiv && errorDiv.parentNode) {
+                    errorDiv.remove();
+                }
+                input.removeEventListener('input', clearError);
+            };
+            
+            input.addEventListener('input', clearError, { once: true });
+        }
+
+        function showSuccess(input) {
+            input.classList.add('success');
+            input.classList.remove('error');
+            
+            // Remove any existing error message
+            const existingError = input.parentNode.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+
+        // Real-time validation
+        emailInput.addEventListener('input', function() {
+            const email = this.value.trim();
+            if (email.length > 0) {
+                if (validateEmail(email)) {
+                    showSuccess(this);
+                } else {
+                    showError(this, 'Please enter a valid email address');
+                }
+            } else {
+                this.classList.remove('error', 'success');
+                const existingError = this.parentNode.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        });
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            if (password.length > 0) {
+                if (validatePassword(password)) {
+                    showSuccess(this);
+                } else {
+                    showError(this, 'Password must be at least 6 characters long');
+                }
+            } else {
+                this.classList.remove('error', 'success');
+                const existingError = this.parentNode.querySelector('.error-message');
+                if (existingError) {
+                    existingError.remove();
+                }
+            }
+        });
+
+        // Form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const rememberMe = rememberMeCheckbox.checked;
+            
+            let isValid = true;
+            
+            // Validate email
+            if (!email) {
+                showError(emailInput, 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(email)) {
+                showError(emailInput, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Validate password
+            if (!password) {
+                showError(passwordInput, 'Password is required');
+                isValid = false;
+            } else if (!validatePassword(password)) {
+                showError(passwordInput, 'Password must be at least 6 characters long');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Show loading state
+                loginButton.classList.add('loading');
+                loginButton.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    loginButton.classList.remove('loading');
+                    loginButton.disabled = false;
+                    
+                    // Simulate successful login
+                    console.log('Login attempt:', {
+                        email: email,
+                        password: password,
+                        rememberMe: rememberMe
+                    });
+                    
+                    // Success animation
+                    loginButton.style.background = 'rgba(144, 238, 144, 0.3)';
+                    loginButton.style.borderColor = 'rgba(144, 238, 144, 0.5)';
+                    loginButton.textContent = 'Success!';
+                    
+                    setTimeout(() => {
+                        alert(`Welcome! Login successful for ${email} (Demo)`);
+                        // Reset button
+                        loginButton.style.background = '';
+                        loginButton.style.borderColor = '';
+                        loginButton.textContent = 'Log in';
+                    }, 1500);
+                    
+                }, 2000);
+            }
+        });
+
+        // Input focus effects
+        [emailInput, passwordInput].forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 0.9)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentNode.querySelector('.input-icon').style.color = 'rgba(255, 255, 255, 0.6)';
+            });
+        });
+
+        // Forgot password handler
+        forgotPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Forgot password clicked');
+            
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-1px)';
+            }, 150);
+            
+            alert('Password reset functionality would be implemented here');
+        });
+
+        // Create account handler
+        createAccountLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Create account clicked');
+            
+            // Visual feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'translateY(-1px)';
+            }, 150);
+            
+            alert('Registration page would open here');
+        });
+
+        // Remember me functionality
+        rememberMeCheckbox.addEventListener('change', function() {
+            console.log('Remember me:', this.checked);
+            
+            // Visual feedback
+            const customCheckbox = this.nextElementSibling;
+            if (this.checked) {
+                customCheckbox.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    customCheckbox.style.transform = 'scale(1)';
+                }, 150);
+            }
+        });
+
+        // Auto-focus email input on load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                emailInput.focus();
+            }, 800); // Wait for entry animation
+        });
+
+        // Keyboard navigation enhancements
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.classList.contains('checkbox-container')) {
+                rememberMeCheckbox.checked = !rememberMeCheckbox.checked;
+                rememberMeCheckbox.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Touch feedback for mobile devices
+        const interactiveElements = [loginButton, forgotPasswordLink, createAccountLink];
+        
+        interactiveElements.forEach(element => {
+            element.addEventListener('touchstart', function() {
+                this.style.opacity = '0.8';
+            });
+            
+            element.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        });
+
+        // Responsive adjustments
+        function handleResize() {
+            const container = document.querySelector('.login-container');
+            const screenHeight = window.innerHeight;
+            
+            if (screenHeight < 600) {
+                container.style.transform = 'scale(0.9)';
+            } else {
+                container.style.transform = '';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        handleResize(); // Initial call
+
+        // Performance optimization - pause animations when not visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const shapes = document.querySelectorAll('.floating-shape');
+                if (entry.isIntersecting) {
+                    shapes.forEach(shape => {
+                        shape.style.animationPlayState = 'running';
+                    });
+                } else {
+                    shapes.forEach(shape => {
+                        shape.style.animationPlayState = 'paused';
+                    });
+                }
+            });
+        });
+
+        observer.observe(document.querySelector('.login-container'));
+    </script>
+</body>
+</html>
